@@ -2,6 +2,8 @@ class gitlab::users {
     user { 'gitlab':
         ensure      => present,
         comment     => 'GitLab CI',
+        groups      => 'git',
+        require     => User['git'],
         system      => true,
         managehome  => true,
     }
