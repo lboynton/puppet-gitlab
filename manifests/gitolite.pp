@@ -42,4 +42,10 @@ class gitlab::gitolite {
         require     => [Exec['install-gitolite'], File['/home/git/gitlab.pub']],
         creates     => '/home/git/projects.list',
     }
+
+    sshkey { 'localhost':
+        type            => 'ssh-rsa',
+        key             => $::sshrsakey,
+        host_aliases    => '127.0.0.1',
+    }
 }
