@@ -1,4 +1,4 @@
-class gitlab_ci::ruby{
+class gitlab::ruby{
     include rvm
 
     rvm_system_ruby { 'ruby-1.9.3':

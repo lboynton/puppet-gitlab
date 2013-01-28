@@ -1,4 +1,4 @@
-class gitlab_ci::redis {
+class gitlab::redis {
     package { 'redis':
         ensure  => installed,
     }

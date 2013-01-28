@@ -1,4 +1,4 @@
-class gitlab_ci::db(
+class gitlab::db(
 	$db_username,
 	$db_password,
 ) {
