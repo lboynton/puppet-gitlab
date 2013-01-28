@@ -57,4 +57,15 @@ class gitlab::gitlab(
         logoutput   => on_failure,
         creates     => '/home/gitlab/gitlab/.bundle/config',
     }
+
+    file { '/home/git/.gitolite/hooks/common/post-receive':
+        ensure      => file,
+        owner       => 'git',
+        group       => 'git',
+        source      => '/home/gitlab/gitlab/lib/hooks/post-receive',
+        require     => [
+            User['git'],
+            Vcsrepo['gitlab'],
+        ],
+    }
 }
