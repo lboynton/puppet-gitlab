@@ -23,5 +23,9 @@ class gitlab (
     class { 'gitlab::gitlab':
         db_username => $db_username,
         db_password => $db_password,
+        require     => [
+            Class['gitlab::users'],
+            Class['gitlab::gitolite'],
+        ]
     }
 }
