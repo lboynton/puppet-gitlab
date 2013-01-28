@@ -48,4 +48,23 @@ class gitlab::gitolite {
         key             => $::sshrsakey,
         host_aliases    => '127.0.0.1',
     }
+
+    file { '/home/git/repositories':
+        ensure          => directory,
+        owner           => 'git',
+        group           => 'git',
+        mode            => 'ug+rwXs,o-rwx',
+        require         => [
+            User['git'],
+            Exec['set-up-gitolite'],
+        ]
+    }
+
+    file { '/home/git':
+        ensure          => directory,
+        owner           => 'git',
+        group           => 'git',
+        mode            => 'ug+rwx',
+        require         => User['git'],
+    }
 }
