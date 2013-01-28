@@ -70,7 +70,7 @@ class gitlab::gitolite {
         ensure          => directory,
         owner           => 'git',
         group           => 'git',
-        mode            => 'ug+rwx',
+        mode            => 750,
         require         => User['git'],
     }
 
