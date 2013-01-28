@@ -7,10 +7,13 @@ class gitlab (
         include epel
     }
 
+    Class['gitlab::users'] -> Class['gitlab::gitolite']
+
     include nginx
     include gitlab::users
     include gitlab::ruby
     include gitlab::redis
+    include gitlab::gitolite
 
     class { 'gitlab::db':
         db_username => $db_username,
