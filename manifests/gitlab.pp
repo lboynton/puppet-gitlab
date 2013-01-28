@@ -55,5 +55,6 @@ class gitlab::gitlab(
             Package['mysql-devel']
         ],
         logoutput   => on_failure,
+        creates     => '/home/gitlab/gitlab/.bundle/config',
     }
 }
