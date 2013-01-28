@@ -17,4 +17,10 @@ class gitlab::users {
         require     => User['gitlab'],
         logoutput   => on_failure,
     }
+    file { '/home/gitlab/.gitconfig':
+        ensure      => file,
+        owner       => 'gitlab',
+        group       => 'gitlab',
+        content     => template('gitlab/gitconfig.erb'),
+    }
 }
