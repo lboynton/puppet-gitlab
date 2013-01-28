@@ -73,4 +73,12 @@ class gitlab::gitolite {
         mode            => 'ug+rwx',
         require         => User['git'],
     }
+
+    file { '/home/git/.gitolite':
+        ensure          => directory,
+        owner           => 'git',
+        group           => 'git',
+        mode            => 750,
+        require         => User['git'],
+    }
 }
