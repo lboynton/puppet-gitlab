@@ -46,7 +46,7 @@ class gitlab::gitolite {
     sshkey { 'localhost':
         type            => 'ssh-rsa',
         key             => $::sshrsakey,
-        host_aliases    => '127.0.0.1',
+        host_aliases    => ['127.0.0.1', $::fqdn],
     }
 
     # make readable by all users
