@@ -13,14 +13,16 @@ class gitlab::gitlab(
         require     => User['gitlab'],
     }
 
-    file { '/home/gitlab/gitlab/config/gitlab.yml':
+    file { 'gitlab.yml':
+        path        => '/home/gitlab/gitlab/config/gitlab.yml',
         ensure      => file,
         owner       => 'gitlab',
         group       => 'gitlab',
         content     => template('gitlab/gitlab.yml.erb'),
     }
 
-    file { '/home/gitlab/gitlab/config/database.yml':
+    file { 'database.yml':
+        path        => '/home/gitlab/gitlab/config/database.yml',
         ensure      => file,
         owner       => 'gitlab',
         group       => 'gitlab',
@@ -45,14 +47,16 @@ class gitlab::gitlab(
         require     => Package['libicu-devel'],
     }
 
-    exec { '/usr/local/rvm/gems/ruby-1.9.3-p374@global/bin/bundle install --deployment --without development test postgres':
+    exec { 'bundle-install':
+        command     => '/usr/local/rvm/gems/ruby-1.9.3-p374@global/bin/bundle install --deployment --without development test postgres',
         cwd         => '/home/gitlab/gitlab',
         user        => 'gitlab',
         require     => [
             Class['gitlab::ruby'], 
             Vcsrepo['gitlab'], 
             Package['charlock_holmes'], 
-            Package['mysql-devel']
+            Package['mysql-devel'],
+            File['gitlab.yml'],
         ],
         logoutput   => on_failure,
         creates     => '/home/gitlab/gitlab/.bundle/config',
@@ -66,6 +70,22 @@ class gitlab::gitlab(
         require     => [
             User['git'],
             Vcsrepo['gitlab'],
+        ],
+    }
+
+    exec { '/usr/local/rvm/gems/ruby-1.9.3-p374@global/bin/bundle exec rake gitlab:setup RAILS_ENV=production':
+        cwd         => '/home/gitlab/gitlab',
+        user        => 'gitlab',
+        refreshonly => true,
+        subscribe   => [
+            User['gitlab'],
+            File['database.yml'],
+        ],
+        logoutput   => on_failure,
+        require     => [
+            Class['gitlab::ruby'], 
+            Vcsrepo['gitlab'],
+            Exec['bundle-install'],
         ],
     }
 }
