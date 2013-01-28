@@ -1,0 +1,18 @@
+[submodule "modules/epel"]
+	path = modules/epel
+	url = https://github.com/stahnma/puppet-module-epel
+[submodule "modules/rvm"]
+	path = modules/rvm
+	url = https://github.com/blt04/puppet-rvm
+[submodule "modules/nginx"]
+	path = modules/nginx
+	url = https://github.com/puppetlabs/puppetlabs-nginx
+[submodule "modules/vcsrepo"]
+	path = modules/vcsrepo
+	url = https://github.com/puppetlabs/puppetlabs-vcsrepo
+[submodule "modules/mysql"]
+	path = modules/mysql
+	url = https://github.com/puppetlabs/puppetlabs-mysql
+[submodule "modules/stdlib"]
+	path = modules/stdlib
+	url = https://github.com/puppetlabs/puppetlabs-stdlib.git
