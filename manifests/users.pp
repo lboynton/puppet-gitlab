@@ -15,5 +15,6 @@ class gitlab::users {
         user        => 'gitlab',
         creates     => '/home/gitlab/.ssh/id_rsa',
         require     => User['gitlab'],
+        logoutput   => on_failure,
     }
 }
