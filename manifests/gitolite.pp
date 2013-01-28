@@ -49,6 +49,12 @@ class gitlab::gitolite {
         host_aliases    => '127.0.0.1',
     }
 
+    # make readable by all users
+    file { '/etc/ssh/ssh_known_hosts':
+        mode            => 644,
+        require         => Sshkey['localhost'],
+    }
+
     file { '/home/git/repositories':
         ensure          => directory,
         owner           => 'git',
