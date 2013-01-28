@@ -8,7 +8,7 @@ class gitlab (
     }
 
     Class['gitlab::users'] -> Class['gitlab::gitolite']
-
+    
     include nginx
     include gitlab::users
     include gitlab::ruby
@@ -16,6 +16,11 @@ class gitlab (
     include gitlab::gitolite
 
     class { 'gitlab::db':
+        db_username => $db_username,
+        db_password => $db_password,
+    }
+
+    class { 'gitlab::gitlab':
         db_username => $db_username,
         db_password => $db_password,
     }
