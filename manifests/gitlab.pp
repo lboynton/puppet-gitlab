@@ -73,7 +73,8 @@ class gitlab::gitlab(
         ],
     }
 
-    exec { '/usr/local/rvm/gems/ruby-1.9.3-p374@global/bin/bundle exec rake gitlab:setup RAILS_ENV=production':
+    exec { 'gitlab:setup':
+        command     => '/usr/local/rvm/gems/ruby-1.9.3-p374@global/bin/bundle exec rake gitlab:setup RAILS_ENV=production',
         cwd         => '/home/gitlab/gitlab',
         user        => 'gitlab',
         refreshonly => true,
@@ -87,5 +88,22 @@ class gitlab::gitlab(
             Vcsrepo['gitlab'],
             Exec['bundle-install'],
         ],
+    }
+
+    file { 'gitlab-init':
+        path        => '/etc/init.d/gitlab',
+        ensure      => file,
+        owner       => 'root',
+        group       => 'root',
+        source      => 'https://raw.github.com/gitlabhq/gitlab-recipes/master/init.d/gitlab',
+    }
+
+    service { 'gitlab':
+        ensure  => running,
+        enable  => true,
+        require => [
+            File['gitlab-init'],
+            Exec['gitlab:setup'],
+        ]
     }
 }
