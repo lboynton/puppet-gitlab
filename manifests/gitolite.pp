@@ -79,6 +79,9 @@ class gitlab::gitolite {
         owner           => 'git',
         group           => 'git',
         mode            => 750,
-        require         => User['git'],
+        require         => [
+            User['git'],
+            Exec['set-up-gitolite'],
+        ]
     }
 }
