@@ -117,12 +117,4 @@ class gitlab::gitlab(
             Exec['gitlab:setup'],
         ]
     }
-
-    file { '/home/gitlab':
-        ensure          => directory,
-        owner           => 'git',
-        group           => 'git',
-        mode            => 755,
-        require         => User['gitlab'],
-    }
 }

@@ -25,4 +25,11 @@ class gitlab::users {
         group       => 'gitlab',
         content     => template('gitlab/gitconfig.erb'),
     }
+    file { '/home/gitlab':
+        ensure          => directory,
+        owner           => 'gitlab',
+        group           => 'gitlab',
+        mode            => 755,
+        require         => User['gitlab'],
+    }
 }
