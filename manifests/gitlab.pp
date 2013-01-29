@@ -50,6 +50,8 @@ class gitlab::gitlab(
         ]
     }
 
+    # TODO: Need to install bundler using the gem from the rvm install of ruby
+    # TODO: Remove rvm paths so that this works when ruby version changes
     exec { 'bundle-install':
         command     => '/usr/local/rvm/gems/ruby-1.9.3-p374@global/bin/bundle install --deployment --without development test postgres',
         cwd         => '/home/gitlab/gitlab',
