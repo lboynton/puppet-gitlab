@@ -44,7 +44,10 @@ class gitlab::gitlab(
     package { 'charlock_holmes':
         ensure      => installed,
         provider    => gem,
-        require     => Package['libicu-devel'],
+        require     => [
+            Package['libicu-devel'],
+            Class['gitlab::ruby'], 
+        ]
     }
 
     exec { 'bundle-install':
