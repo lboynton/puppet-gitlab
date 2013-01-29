@@ -10,6 +10,7 @@ class gitlab (
     Class['gitlab::users'] -> Class['gitlab::gitolite']
     Class['gitlab::gitlab'] -> Class['gitlab::nginx']
     
+    include ::nginx
     include gitlab::users
     include gitlab::ruby
     include gitlab::redis
