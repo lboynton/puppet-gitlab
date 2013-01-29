@@ -50,7 +50,8 @@ class gitlab::gitlab(
         ]
     }
 
-    # TODO: Need to install bundler using the gem from the rvm install of ruby
+    # TODO: Need to install bundler using the gem from the rvm install of ruby.
+    # Currently have to log in as root and do gem install bundler.
     # TODO: Remove rvm paths so that this works when ruby version changes
     exec { 'bundle-install':
         command     => '/usr/local/rvm/gems/ruby-1.9.3-p374@global/bin/bundle install --deployment --without development test postgres',
@@ -79,6 +80,9 @@ class gitlab::gitlab(
         ],
     }
 
+    # TODO: This script requires input to confirm db setup. Currently have to 
+    # manually edit /home/gitlab/gitlab/lib/tasks/setup.rake to remove it.
+    # Then you have to delete database.yml so that this is re-run.
     exec { 'gitlab:setup':
         command     => '/usr/local/rvm/gems/ruby-1.9.3-p374@global/bin/bundle exec rake gitlab:setup RAILS_ENV=production',
         cwd         => '/home/gitlab/gitlab',
