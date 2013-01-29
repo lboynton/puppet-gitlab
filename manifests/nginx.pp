@@ -13,8 +13,9 @@ class gitlab::nginx {
     }
 
     nginx::resource::location { "@gitlab":
-        location    => '@gitlab',
-        proxy       => 'http://gitlab',
-        vhost       => "$fqdn",
+        location            => '@gitlab',
+        proxy               => 'http://gitlab',
+        vhost               => "$fqdn",
+        proxy_read_timeout  => 300,
     }
 }
