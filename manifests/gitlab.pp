@@ -88,6 +88,18 @@ class gitlab::gitlab(
         ],
     }
 
+    file { 'unicorn.rb':
+        path        => '/home/gitlab/gitlab/config/unicorn.rb',
+        ensure      => file,
+        owner       => gitlab,
+        group       => gitlab,
+        source      => '/home/gitlab/gitlab/config/unicorn.rb.example',
+        require     => [
+            User['gitlab'],
+            Vcsrepo['gitlab'],
+        ],
+    }
+
     file { 'gitlab-init':
         path        => '/etc/init.d/gitlab',
         ensure      => file,
