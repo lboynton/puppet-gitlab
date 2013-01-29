@@ -93,7 +93,7 @@ class gitlab::gitlab(
         ensure      => file,
         owner       => 'root',
         group       => 'root',
-        source      => 'https://raw.github.com/gitlabhq/gitlab-recipes/master/init.d/gitlab',
+        source      => 'puppet:///modules/gitlab/gitlab-init',
     }
 
     service { 'gitlab':
