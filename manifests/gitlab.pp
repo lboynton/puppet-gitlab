@@ -78,12 +78,10 @@ class gitlab::gitlab(
         cwd         => '/home/gitlab/gitlab',
         user        => 'gitlab',
         refreshonly => true,
-        subscribe   => [
-            User['gitlab'],
-            File['database.yml'],
-        ],
+        subscribe   => File['database.yml'],
         logoutput   => on_failure,
         require     => [
+            User['gitlab'],
             Class['gitlab::ruby'], 
             Vcsrepo['gitlab'],
             Exec['bundle-install'],
