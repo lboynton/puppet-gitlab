@@ -2,7 +2,7 @@ class gitlab::nginx {
     nginx::resource::upstream { 'gitlab':
         ensure  => present,
         members => [
-            'unix:/home/gitlab/gitlab   /tmp/sockets/gitlab.socket',
+            'unix:/home/gitlab/gitlab/tmp/sockets/gitlab.socket',
         ]
     }
 
