@@ -46,7 +46,7 @@ class gitlab::gitlab(
         provider    => gem,
         require     => [
             Package['libicu-devel'],
-            Class['gitlab::ruby'], 
+            Class['gitlab::ruby'],
         ]
     }
 
@@ -58,9 +58,9 @@ class gitlab::gitlab(
         cwd         => '/home/gitlab/gitlab',
         user        => 'gitlab',
         require     => [
-            Class['gitlab::ruby'], 
-            Vcsrepo['gitlab'], 
-            Package['charlock_holmes'], 
+            Class['gitlab::ruby'],
+            Vcsrepo['gitlab'],
+            Package['charlock_holmes'],
             Package['mysql-devel'],
             File['gitlab.yml'],
         ],
@@ -80,7 +80,7 @@ class gitlab::gitlab(
         ],
     }
 
-    # TODO: This script requires input to confirm db setup. Currently have to 
+    # TODO: This script requires input to confirm db setup. Currently have to
     # manually edit /home/gitlab/gitlab/lib/tasks/setup.rake to remove it.
     # Then you have to delete database.yml so that this is re-run.
     exec { 'gitlab:setup':
@@ -93,7 +93,7 @@ class gitlab::gitlab(
         logoutput   => on_failure,
         require     => [
             User['gitlab'],
-            Class['gitlab::ruby'], 
+            Class['gitlab::ruby'],
             Vcsrepo['gitlab'],
             Exec['bundle-install'],
         ],
@@ -111,13 +111,20 @@ class gitlab::gitlab(
         ],
     }
 
+    if $::osfamily == 'RedHat' {
+        $init = 'puppet:///modules/gitlab/gitlab-init.centos6'
+    }
+    else {
+        $init = 'puppet:///modules/gitlab/gitlab-init'
+    }
+
     file { 'gitlab-init':
         path        => '/etc/init.d/gitlab',
         ensure      => file,
         owner       => 'root',
         group       => 'root',
         mode        => 0755,
-        source      => 'puppet:///modules/gitlab/gitlab-init',
+        source      => $init,
     }
 
     service { 'gitlab':
