@@ -2,12 +2,11 @@
 # PRODUCTION
 #
 production:
-  adapter: mysql2
+  adapter: <%= db_type %>
   encoding: utf8
   reconnect: false
-  database: gitlab
+  database: <%= db_name %>
   pool: 5
   username: "<%= db_username %>"
   password: "<%= db_password %>"
-  host: localhost
-  # socket: /tmp/mysql.sock
+  host: <%= db_server %>

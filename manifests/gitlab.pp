@@ -1,4 +1,7 @@
 class gitlab::gitlab(
+    $db_server,
+	$db_type,
+	$db_name,
     $db_username,
     $db_password,
 ) {
@@ -29,11 +32,14 @@ class gitlab::gitlab(
         content     => template('gitlab/database.yml.erb'),
     }
 
-    if !defined(Package['mysql-devel']) {
+	if $db_type == 'mysql' and !defined(Package['mysql-devel']) {
         package {'mysql-devel':
             ensure  => installed,
         }
-    }
+    }else{
+		include postgresql::client
+		include postgresql::devel
+	}
 
     if !defined(Package['libicu-devel']) {
         package { 'libicu-devel':
@@ -49,19 +55,27 @@ class gitlab::gitlab(
             Class['gitlab::ruby'], 
         ]
     }
-
+	#Quick Fix to bundle the right requirements
+	if $db_type == 'mysql' {
+		db_require = 'mysql-devel'
+		db_without = 'postgres'
+	}
+	else{
+		db_require = 'postgresql-devel'
+		db_without = 'mysql'
+	}
     # TODO: Need to install bundler using the gem from the rvm install of ruby.
     # Currently have to log in as root and do gem install bundler.
     # TODO: Remove rvm paths so that this works when ruby version changes
     exec { 'bundle-install':
-        command     => '/usr/local/rvm/gems/ruby-1.9.3-p374@global/bin/bundle install --deployment --without development test postgres',
+        command     => '/usr/local/rvm/gems/ruby-1.9.3-p374@global/bin/bundle install --deployment --without development test $db_without',
         cwd         => '/home/gitlab/gitlab',
         user        => 'gitlab',
         require     => [
             Class['gitlab::ruby'], 
             Vcsrepo['gitlab'], 
             Package['charlock_holmes'], 
-            Package['mysql-devel'],
+            Package[$db_require],
             File['gitlab.yml'],
         ],
         path        => '/usr/local/rvm/gems/ruby-1.9.3-p374/bin:/usr/local/rvm/gems/ruby-1.9.3-p374@global/bin:/usr/local/rvm/rubies/ruby-1.9.3-p374/bin:/usr/local/rvm/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
