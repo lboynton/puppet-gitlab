@@ -2,7 +2,7 @@
 # PRODUCTION
 #
 production:
-  adapter: <%= db_type %>
+  adapter: <% if db_type == 'mysql' %>mysql2<% else %>postgresql<% end %>
   encoding: utf8
   reconnect: false
   database: <%= db_name %>

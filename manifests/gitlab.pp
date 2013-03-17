@@ -1,16 +1,16 @@
 class gitlab::gitlab(
-    $db_server,
-	$db_type,
-	$db_name,
-    $db_username,
-    $db_password,
+    $db_server   = 'localhost',
+	$db_type     = 'mysql',
+	$db_name     = 'gitlab',
+    $db_username = 'gitlab',
+    $db_password = 'gitlab',
 ) {
     vcsrepo { 'gitlab':
         ensure      => present,
         path        => '/home/gitlab/gitlab',
         provider    => git,
         source      => 'https://github.com/gitlabhq/gitlabhq.git',
-        revision    => '4-1-stable',
+        revision    => '4-2-stable',
         owner       => 'gitlab',
         group       => 'gitlab',
         require     => User['gitlab'],
@@ -32,11 +32,19 @@ class gitlab::gitlab(
         content     => template('gitlab/database.yml.erb'),
     }
 
-	if $db_type == 'mysql' and !defined(Package['mysql-devel']) {
-        package {'mysql-devel':
-            ensure  => installed,
-        }
+	if $db_type == 'mysql' {
+		if !defined(Package['mysql-devel']) {
+	        package {'mysql-devel':
+    	        ensure  => installed,
+       		}
+		}
+		if !defined(Package['mysql']) {
+	        package {'mysql':
+    	        ensure  => installed,
+        	}
+		}
     }else{
+		include postgresql
 		include postgresql::client
 		include postgresql::devel
 	}
@@ -57,18 +65,18 @@ class gitlab::gitlab(
     }
 	#Quick Fix to bundle the right requirements
 	if $db_type == 'mysql' {
-		db_require = 'mysql-devel'
-		db_without = 'postgres'
+		$db_require = 'mysql-devel'
+		$db_without = 'postgres'
 	}
 	else{
-		db_require = 'postgresql-devel'
-		db_without = 'mysql'
+		$db_require = 'postgresql-devel'
+		$db_without = 'mysql'
 	}
     # TODO: Need to install bundler using the gem from the rvm install of ruby.
     # Currently have to log in as root and do gem install bundler.
     # TODO: Remove rvm paths so that this works when ruby version changes
     exec { 'bundle-install':
-        command     => '/usr/local/rvm/gems/ruby-1.9.3-p374@global/bin/bundle install --deployment --without development test $db_without',
+        command     => "/usr/local/rvm/gems/ruby-1.9.3-p392@global/bin/bundle install --deployment --without development test ${db_without}",
         cwd         => '/home/gitlab/gitlab',
         user        => 'gitlab',
         require     => [
@@ -78,7 +86,7 @@ class gitlab::gitlab(
             Package[$db_require],
             File['gitlab.yml'],
         ],
-        path        => '/usr/local/rvm/gems/ruby-1.9.3-p374/bin:/usr/local/rvm/gems/ruby-1.9.3-p374@global/bin:/usr/local/rvm/rubies/ruby-1.9.3-p374/bin:/usr/local/rvm/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
+        path        => '/usr/local/rvm/gems/ruby-1.9.3-p392/bin:/usr/local/rvm/gems/ruby-1.9.3-p392@global/bin:/usr/local/rvm/rubies/ruby-1.9.3-p392/bin:/usr/local/rvm/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
         logoutput   => on_failure,
         creates     => '/home/gitlab/gitlab/.bundle/config',
     }
@@ -98,12 +106,12 @@ class gitlab::gitlab(
     # manually edit /home/gitlab/gitlab/lib/tasks/setup.rake to remove it.
     # Then you have to delete database.yml so that this is re-run.
     exec { 'gitlab:setup':
-        command     => '/usr/local/rvm/gems/ruby-1.9.3-p374@global/bin/bundle exec rake gitlab:setup RAILS_ENV=production',
+        command     => '/usr/local/rvm/gems/ruby-1.9.3-p392@global/bin/bundle exec rake gitlab:setup RAILS_ENV=production',
         cwd         => '/home/gitlab/gitlab',
         user        => 'gitlab',
         refreshonly => true,
         subscribe   => File['database.yml'],
-        path        => '/usr/local/rvm/gems/ruby-1.9.3-p374/bin:/usr/local/rvm/gems/ruby-1.9.3-p374@global/bin:/usr/local/rvm/rubies/ruby-1.9.3-p374/bin:/usr/local/rvm/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
+        path        => '/usr/local/rvm/gems/ruby-1.9.3-p392/bin:/usr/local/rvm/gems/ruby-1.9.3-p392@global/bin:/usr/local/rvm/rubies/ruby-1.9.3-p392/bin:/usr/local/rvm/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
         logoutput   => on_failure,
         require     => [
             User['gitlab'],
