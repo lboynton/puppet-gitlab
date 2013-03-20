@@ -44,9 +44,15 @@ class gitlab::gitlab(
     package { 'charlock_holmes':
         ensure      => installed,
         provider    => gem,
-        require     => Package['libicu-devel'],
+        require     => [
+            Package['libicu-devel'],
+            Class['gitlab::ruby'], 
+        ]
     }
 
+    # TODO: Need to install bundler using the gem from the rvm install of ruby.
+    # Currently have to log in as root and do gem install bundler.
+    # TODO: Remove rvm paths so that this works when ruby version changes
     exec { 'bundle-install':
         command     => '/usr/local/rvm/gems/ruby-1.9.3-p374@global/bin/bundle install --deployment --without development test postgres',
         cwd         => '/home/gitlab/gitlab',
@@ -58,6 +64,7 @@ class gitlab::gitlab(
             Package['mysql-devel'],
             File['gitlab.yml'],
         ],
+        path        => '/usr/local/rvm/gems/ruby-1.9.3-p374/bin:/usr/local/rvm/gems/ruby-1.9.3-p374@global/bin:/usr/local/rvm/rubies/ruby-1.9.3-p374/bin:/usr/local/rvm/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
         logoutput   => on_failure,
         creates     => '/home/gitlab/gitlab/.bundle/config',
     }
@@ -73,19 +80,52 @@ class gitlab::gitlab(
         ],
     }
 
-    exec { '/usr/local/rvm/gems/ruby-1.9.3-p374@global/bin/bundle exec rake gitlab:setup RAILS_ENV=production':
+    # TODO: This script requires input to confirm db setup. Currently have to 
+    # manually edit /home/gitlab/gitlab/lib/tasks/setup.rake to remove it.
+    # Then you have to delete database.yml so that this is re-run.
+    exec { 'gitlab:setup':
+        command     => '/usr/local/rvm/gems/ruby-1.9.3-p374@global/bin/bundle exec rake gitlab:setup RAILS_ENV=production',
         cwd         => '/home/gitlab/gitlab',
         user        => 'gitlab',
         refreshonly => true,
-        subscribe   => [
-            User['gitlab'],
-            File['database.yml'],
-        ],
+        subscribe   => File['database.yml'],
+        path        => '/usr/local/rvm/gems/ruby-1.9.3-p374/bin:/usr/local/rvm/gems/ruby-1.9.3-p374@global/bin:/usr/local/rvm/rubies/ruby-1.9.3-p374/bin:/usr/local/rvm/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
         logoutput   => on_failure,
         require     => [
+            User['gitlab'],
             Class['gitlab::ruby'], 
             Vcsrepo['gitlab'],
             Exec['bundle-install'],
         ],
+    }
+
+    file { 'unicorn.rb':
+        path        => '/home/gitlab/gitlab/config/unicorn.rb',
+        ensure      => file,
+        owner       => gitlab,
+        group       => gitlab,
+        source      => '/home/gitlab/gitlab/config/unicorn.rb.example',
+        require     => [
+            User['gitlab'],
+            Vcsrepo['gitlab'],
+        ],
+    }
+
+    file { 'gitlab-init':
+        path        => '/etc/init.d/gitlab',
+        ensure      => file,
+        owner       => 'root',
+        group       => 'root',
+        mode        => 0755,
+        source      => 'puppet:///modules/gitlab/gitlab-init',
+    }
+
+    service { 'gitlab':
+        ensure  => running,
+        enable  => true,
+        require => [
+            File['gitlab-init'],
+            Exec['gitlab:setup'],
+        ]
     }
 }
