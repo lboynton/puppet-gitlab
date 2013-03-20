@@ -1,4 +1,6 @@
-class gitlab::nginx {
+class gitlab::nginx(
+		$vhost = $fqdn,
+	){
     nginx::resource::upstream { 'gitlab':
         ensure  => present,
         members => [
@@ -6,7 +8,7 @@ class gitlab::nginx {
         ]
     }
 
-    nginx::resource::vhost { "$fqdn":
+    nginx::resource::vhost { "$vhost":
         ensure      => present,
         www_root    => '/home/gitlab/gitlab/public',
         try_files   => '$uri $uri/index.html $uri.html @gitlab',
@@ -15,7 +17,7 @@ class gitlab::nginx {
     nginx::resource::location { "@gitlab":
         location            => '@gitlab',
         proxy               => 'http://gitlab',
-        vhost               => "$fqdn",
+        vhost               => "$vhost",
         proxy_read_timeout  => 300,
     }
 }

@@ -10,3 +10,6 @@ Dependencies
 * [puppetlabs-mysql](https://github.com/puppetlabs/puppetlabs-mysql)
 * [puppetlabs-vcsrepo](https://github.com/puppetlabs/puppetlabs-vcsrepo)
 * [puppetlabs-nginx](https://github.com/puppetlabs/puppetlabs-nginx)
+
+Optional
+* [puppetlabs-postgresql](https://forge.puppetlabs.com/puppetlabs/postgresql)
