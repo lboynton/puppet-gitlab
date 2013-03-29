@@ -7,5 +7,6 @@ dependency 'maestrodev/rvm', '1.0.x'
 dependency 'puppetlabs/mysql', '0.6.x'
 dependency 'puppetlabs/vcsrepo', '0.1.x'
 dependency 'puppetlabs/nginx', '>0.0.1'
-description "Sets up gitlab and MySQL on CentOS/RHEL"
+summary "Sets up Gitlab and MySQL on CentOS/RHEL"
+description "Sets up Gitlab and MySQL on CentOS/RHEL"
 project_page 'https://github.com/lboynton/puppet-gitlab'
