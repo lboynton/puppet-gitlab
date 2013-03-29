@@ -27,6 +27,7 @@ class gitlab (
 	if( $db_server == 'localhost' or $db_server == '127.0.0.1'){
 	    class { 'gitlab::db':
 			db_type     => $db_type,
+            db_server   => $db_server,
 			db_name		=> $db_name,
     	    db_username => $db_username,
         	db_password => $db_password,
