@@ -5,7 +5,7 @@ class gitlab (
 	$db_name     = 'gitlab',
     $db_username = 'gitlab',
     $db_password = 'gitlab',
-    $vhost		 = '$fqdn',
+    $vhost		 = $fqdn,
 ) {
     if $::osfamily == 'RedHat' and $::operatingsystem != 'Fedora' {
         include epel
