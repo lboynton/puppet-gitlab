@@ -39,7 +39,7 @@ class gitlab::gitlab(
         if !defined(Package['mysql-devel']) {
             package {'mysql-devel':
                 ensure  => installed,
-               }
+            }
         }
         if !defined(Package['mysql']) {
             package {'mysql':
