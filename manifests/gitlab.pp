@@ -4,6 +4,8 @@ class gitlab::gitlab(
     $db_name     = 'gitlab',
     $db_username = 'gitlab',
     $db_password = 'gitlab',
+    $vhost       = $fqdn,
+    $port        = 80,
 ) {
     vcsrepo { 'gitlab':
         ensure      => present,
@@ -22,6 +24,7 @@ class gitlab::gitlab(
         owner       => 'gitlab',
         group       => 'gitlab',
         content     => template('gitlab/gitlab.yml.erb'),
+        notify      => Service['gitlab'],
     }
 
     file { 'database.yml':
@@ -60,7 +63,7 @@ class gitlab::gitlab(
         provider    => gem,
         require     => [
             Package['libicu-devel'],
-            Class['gitlab::ruby'], 
+            Class['gitlab::ruby'],
         ]
     }
     #Quick Fix to bundle the right requirements
@@ -80,9 +83,9 @@ class gitlab::gitlab(
         cwd         => '/home/gitlab/gitlab',
         user        => 'gitlab',
         require     => [
-            Class['gitlab::ruby'], 
-            Vcsrepo['gitlab'], 
-            Package['charlock_holmes'], 
+            Class['gitlab::ruby'],
+            Vcsrepo['gitlab'],
+            Package['charlock_holmes'],
             Package[$db_require],
             File['gitlab.yml'],
         ],
@@ -102,7 +105,7 @@ class gitlab::gitlab(
         ],
     }
 
-    # TODO: This script requires input to confirm db setup. Currently have to 
+    # TODO: This script requires input to confirm db setup. Currently have to
     # manually edit /home/gitlab/gitlab/lib/tasks/setup.rake to remove it.
     # Then you have to delete database.yml so that this is re-run.
     exec { 'gitlab:setup':
@@ -115,7 +118,7 @@ class gitlab::gitlab(
         logoutput   => on_failure,
         require     => [
             User['gitlab'],
-            Class['gitlab::ruby'], 
+            Class['gitlab::ruby'],
             Vcsrepo['gitlab'],
             Exec['bundle-install'],
         ],

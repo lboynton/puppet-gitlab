@@ -6,6 +6,7 @@ class gitlab (
     $db_username = 'gitlab',
     $db_password = 'gitlab',
     $vhost       = $fqdn,
+    $port        = 80,
 ) {
     if $::osfamily == 'RedHat' and $::operatingsystem != 'Fedora' {
         include epel
@@ -40,6 +41,8 @@ class gitlab (
         db_server   => $db_server,
         db_username => $db_username,
         db_password => $db_password,
+        vhost       => $vhost,
+        port        => $port,
         require     => [
             Class['gitlab::users'],
             Class['gitlab::gitolite'],
