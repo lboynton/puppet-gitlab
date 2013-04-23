@@ -1,6 +1,6 @@
 class gitlab::nginx(
-		$vhost = $fqdn,
-	){
+        $vhost = $fqdn,
+    ){
     nginx::resource::upstream { 'gitlab':
         ensure  => present,
         members => [

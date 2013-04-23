@@ -1,7 +1,7 @@
 class gitlab::gitlab(
     $db_server   = 'localhost',
-	$db_type     = 'mysql',
-	$db_name     = 'gitlab',
+    $db_type     = 'mysql',
+    $db_name     = 'gitlab',
     $db_username = 'gitlab',
     $db_password = 'gitlab',
 ) {
@@ -32,22 +32,22 @@ class gitlab::gitlab(
         content     => template('gitlab/database.yml.erb'),
     }
 
-	if $db_type == 'mysql' {
-		if !defined(Package['mysql-devel']) {
-	        package {'mysql-devel':
-    	        ensure  => installed,
-       		}
-		}
-		if !defined(Package['mysql']) {
-	        package {'mysql':
-    	        ensure  => installed,
-        	}
-		}
+    if $db_type == 'mysql' {
+        if !defined(Package['mysql-devel']) {
+            package {'mysql-devel':
+                ensure  => installed,
+               }
+        }
+        if !defined(Package['mysql']) {
+            package {'mysql':
+                ensure  => installed,
+            }
+        }
     }else{
-		include postgresql
-		include postgresql::client
-		include postgresql::devel
-	}
+        include postgresql
+        include postgresql::client
+        include postgresql::devel
+    }
 
     if !defined(Package['libicu-devel']) {
         package { 'libicu-devel':
@@ -63,15 +63,15 @@ class gitlab::gitlab(
             Class['gitlab::ruby'], 
         ]
     }
-	#Quick Fix to bundle the right requirements
-	if $db_type == 'mysql' {
-		$db_require = 'mysql-devel'
-		$db_without = 'postgres'
-	}
-	else{
-		$db_require = 'postgresql-devel'
-		$db_without = 'mysql'
-	}
+    #Quick Fix to bundle the right requirements
+    if $db_type == 'mysql' {
+        $db_require = 'mysql-devel'
+        $db_without = 'postgres'
+    }
+    else{
+        $db_require = 'postgresql-devel'
+        $db_without = 'mysql'
+    }
     # TODO: Need to install bundler using the gem from the rvm install of ruby.
     # Currently have to log in as root and do gem install bundler.
     # TODO: Remove rvm paths so that this works when ruby version changes
