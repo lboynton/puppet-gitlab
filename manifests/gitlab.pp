@@ -94,17 +94,6 @@ class gitlab::gitlab(
         creates     => '/home/git/gitlab/.bundle/config',
     }
 
-    file { '/home/git/.gitolite/hooks/common/post-receive':
-        ensure      => file,
-        owner       => 'git',
-        group       => 'git',
-        source      => '/home/git/gitlab/lib/hooks/post-receive',
-        require     => [
-            User['git'],
-            Vcsrepo['gitlab'],
-        ],
-    }
-
     # TODO: This script requires input to confirm db setup. Currently have to
     # manually edit /home/gitlab/gitlab/lib/tasks/setup.rake to remove it.
     # Then you have to delete database.yml so that this is re-run.

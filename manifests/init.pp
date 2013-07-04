@@ -12,15 +12,14 @@ class gitlab (
         include epel
     }
 
-    Class['gitlab::users']  -> Class['gitlab::gitolite']
-    #Class['gitlab::users'] -> Class['gitlab::gitolite::vcsrepo']
+    Class['gitlab::users']  -> Class['gitlab::shell']
     Class['gitlab::gitlab'] -> Class['gitlab::nginx']
 
     include ::nginx
     include gitlab::users
     include gitlab::ruby
     include gitlab::redis
-    include gitlab::gitolite
+    include gitlab::shell
     class    { 'gitlab::nginx':
         vhost => $vhost,
     }
@@ -45,7 +44,7 @@ class gitlab (
         port        => $port,
         require     => [
             Class['gitlab::users'],
-            Class['gitlab::gitolite'],
+            Class['gitlab::shell'],
         ]
     }
 }
