@@ -12,7 +12,7 @@ class gitlab::gitlab(
         path        => '/home/git/gitlab',
         provider    => git,
         source      => 'https://github.com/gitlabhq/gitlabhq.git',
-        revision    => '4-2-stable',
+        revision    => '5-3-stable',
         owner       => 'git',
         group       => 'git',
         require     => User['git'],
