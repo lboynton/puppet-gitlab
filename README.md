@@ -3,6 +3,10 @@ Puppet GitLab module
 
 Tested on CentOS 6.
 
+Upgrading
+--------------
+Warning: Upgrading an existing puppet-gitlab install has not been tested, and will most likely break something. I recommend setting up a new instance and migrating the data across.
+
 Dependencies
 --------------
 * [puppet-module-epel](https://github.com/stahnma/puppet-module-epel)
