@@ -4,13 +4,13 @@ class gitlab::nginx(
     nginx::resource::upstream { 'gitlab':
         ensure  => present,
         members => [
-            'unix:/home/gitlab/gitlab/tmp/sockets/gitlab.socket',
+            'unix:/home/git/gitlab/tmp/sockets/gitlab.socket',
         ]
     }
 
     nginx::resource::vhost { "$vhost":
         ensure      => present,
-        www_root    => '/home/gitlab/gitlab/public',
+        www_root    => '/home/git/gitlab/public',
         try_files   => '$uri $uri/index.html $uri.html @gitlab',
     }
 

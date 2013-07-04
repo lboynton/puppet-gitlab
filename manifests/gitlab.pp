@@ -9,29 +9,29 @@ class gitlab::gitlab(
 ) {
     vcsrepo { 'gitlab':
         ensure      => present,
-        path        => '/home/gitlab/gitlab',
+        path        => '/home/git/gitlab',
         provider    => git,
         source      => 'https://github.com/gitlabhq/gitlabhq.git',
         revision    => '4-2-stable',
-        owner       => 'gitlab',
-        group       => 'gitlab',
-        require     => User['gitlab'],
+        owner       => 'git',
+        group       => 'git',
+        require     => User['git'],
     }
 
     file { 'gitlab.yml':
-        path        => '/home/gitlab/gitlab/config/gitlab.yml',
+        path        => '/home/git/gitlab/config/gitlab.yml',
         ensure      => file,
-        owner       => 'gitlab',
-        group       => 'gitlab',
+        owner       => 'git',
+        group       => 'git',
         content     => template('gitlab/gitlab.yml.erb'),
         notify      => Service['gitlab'],
     }
 
     file { 'database.yml':
-        path        => '/home/gitlab/gitlab/config/database.yml',
+        path        => '/home/git/gitlab/config/database.yml',
         ensure      => file,
-        owner       => 'gitlab',
-        group       => 'gitlab',
+        owner       => 'git',
+        group       => 'git',
         content     => template('gitlab/database.yml.erb'),
     }
 
@@ -80,8 +80,8 @@ class gitlab::gitlab(
     # TODO: Remove rvm paths so that this works when ruby version changes
     exec { 'bundle-install':
         command     => "/usr/local/rvm/gems/ruby-1.9.3-p392@global/bin/bundle install --deployment --without development test ${db_without}",
-        cwd         => '/home/gitlab/gitlab',
-        user        => 'gitlab',
+        cwd         => '/home/git/gitlab',
+        user        => 'git',
         require     => [
             Class['gitlab::ruby'],
             Vcsrepo['gitlab'],
@@ -91,14 +91,14 @@ class gitlab::gitlab(
         ],
         path        => '/usr/local/rvm/gems/ruby-1.9.3-p392/bin:/usr/local/rvm/gems/ruby-1.9.3-p392@global/bin:/usr/local/rvm/rubies/ruby-1.9.3-p392/bin:/usr/local/rvm/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
         logoutput   => on_failure,
-        creates     => '/home/gitlab/gitlab/.bundle/config',
+        creates     => '/home/git/gitlab/.bundle/config',
     }
 
     file { '/home/git/.gitolite/hooks/common/post-receive':
         ensure      => file,
         owner       => 'git',
         group       => 'git',
-        source      => '/home/gitlab/gitlab/lib/hooks/post-receive',
+        source      => '/home/git/gitlab/lib/hooks/post-receive',
         require     => [
             User['git'],
             Vcsrepo['gitlab'],
@@ -110,14 +110,14 @@ class gitlab::gitlab(
     # Then you have to delete database.yml so that this is re-run.
     exec { 'gitlab:setup':
         command     => '/usr/local/rvm/gems/ruby-1.9.3-p392@global/bin/bundle exec rake gitlab:setup RAILS_ENV=production',
-        cwd         => '/home/gitlab/gitlab',
-        user        => 'gitlab',
+        cwd         => '/home/git/gitlab',
+        user        => 'git',
         refreshonly => true,
         subscribe   => File['database.yml'],
         path        => '/usr/local/rvm/gems/ruby-1.9.3-p392/bin:/usr/local/rvm/gems/ruby-1.9.3-p392@global/bin:/usr/local/rvm/rubies/ruby-1.9.3-p392/bin:/usr/local/rvm/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
         logoutput   => on_failure,
         require     => [
-            User['gitlab'],
+            User['git'],
             Class['gitlab::ruby'],
             Vcsrepo['gitlab'],
             Exec['bundle-install'],
@@ -125,13 +125,13 @@ class gitlab::gitlab(
     }
 
     file { 'unicorn.rb':
-        path        => '/home/gitlab/gitlab/config/unicorn.rb',
+        path        => '/home/git/gitlab/config/unicorn.rb',
         ensure      => file,
-        owner       => gitlab,
-        group       => gitlab,
-        source      => '/home/gitlab/gitlab/config/unicorn.rb.example',
+        owner       => git,
+        group       => git,
+        source      => '/home/git/gitlab/config/unicorn.rb.example',
         require     => [
-            User['gitlab'],
+            User['git'],
             Vcsrepo['gitlab'],
         ],
     }

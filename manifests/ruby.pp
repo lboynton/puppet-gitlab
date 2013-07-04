@@ -11,5 +11,5 @@ class gitlab::ruby{
         require     => Rvm_system_ruby['ruby-1.9.3'],
     }
 
-    rvm::system_user { gitlab: }
+    rvm::system_user { git: }
 }

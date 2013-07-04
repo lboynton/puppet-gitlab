@@ -1,36 +1,28 @@
 class gitlab::users {
-    user { 'gitlab':
-        ensure      => present,
-        comment     => 'GitLab CI',
-        groups      => 'git',
-        require     => User['git'],
-        system      => true,
-        managehome  => true,
-    }
     user { 'git':
         ensure      => present,
         comment     => 'Git Version Control',
         system      => true,
         managehome  => true,
     }
-    exec { '/usr/bin/ssh-keygen -q -N "" -t rsa -f /home/gitlab/.ssh/id_rsa':
-        user        => 'gitlab',
-        creates     => '/home/gitlab/.ssh/id_rsa',
-        require     => User['gitlab'],
+    exec { '/usr/bin/ssh-keygen -q -N "" -t rsa -f /home/git/.ssh/id_rsa':
+        user        => 'git',
+        creates     => '/home/git/.ssh/id_rsa',
+        require     => User['git'],
         logoutput   => on_failure,
     }
-    file { '/home/gitlab/.gitconfig':
+    file { '/home/git/.gitconfig':
         ensure      => file,
-        owner       => 'gitlab',
-        group       => 'gitlab',
-        content     => template('gitlab/gitconfig.erb'),
-        require     => User['gitlab'],
+        owner       => 'git',
+        group       => 'git',
+        content     => template('git/gitconfig.erb'),
+        require     => User['git'],
     }
-    file { '/home/gitlab':
+    file { '/home/git':
         ensure          => directory,
-        owner           => 'gitlab',
-        group           => 'gitlab',
+        owner           => 'git',
+        group           => 'git',
         mode            => 755,
-        require         => User['gitlab'],
+        require         => User['git'],
     }
 }
