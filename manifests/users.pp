@@ -15,7 +15,7 @@ class gitlab::users {
         ensure      => file,
         owner       => 'git',
         group       => 'git',
-        content     => template('git/gitconfig.erb'),
+        content     => template('gitlab/gitconfig.erb'),
         require     => User['git'],
     }
     file { '/home/git':
