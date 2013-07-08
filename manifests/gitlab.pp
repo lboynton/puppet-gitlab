@@ -94,12 +94,10 @@ class gitlab::gitlab(
         creates     => '/home/git/gitlab/.bundle/config',
     }
 
-    # TODO: This script requires input to confirm db setup. Currently have to
-    # manually edit /home/gitlab/gitlab/lib/tasks/setup.rake to remove it.
-    # Then you have to delete database.yml so that this is re-run.
     exec { 'gitlab:setup':
         command     => '/usr/local/rvm/gems/ruby-1.9.3-p448@global/bin/bundle exec rake gitlab:setup RAILS_ENV=production',
         cwd         => '/home/git/gitlab',
+        environment => 'force=yes',
         user        => 'git',
         refreshonly => true,
         subscribe   => File['database.yml'],
