@@ -134,6 +134,14 @@ class gitlab::gitlab(
         source      => 'puppet:///modules/gitlab/gitlab-init',
     }
 
+    file { '/home/git/gitlab/tmp/sockets':
+        ensure      => directory,
+        owner       => 'git',
+        group       => 'git',
+        mode        => 0755,
+        require     => Vcsrepo['gitlab'],
+    }
+
     service { 'gitlab':
         ensure  => running,
         enable  => true,
