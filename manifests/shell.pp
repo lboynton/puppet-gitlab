@@ -18,10 +18,10 @@ class gitlab::shell {
         content     => template('gitlab/gitlab-shell.yml.erb'),
     }
 
-    # todo: only run this once
-    exec { 'rewrite-hooks':
-        command     => '/home/git/gitlab-shell/support/rewrite-hooks.sh',
-        cwd         => '/home/git',
-        user        => 'git'
+    exec { 'install':
+        command     => '/home/git/gitlab-shell/bin/install.sh',
+        creates     => '/home/git/repositories',
+        cwd         => '/home/git/gitlab-shell',
+        user        => 'git',
     }
 }

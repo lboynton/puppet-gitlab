@@ -107,8 +107,7 @@ class gitlab::gitlab(
             User['git'],
             Class['gitlab::ruby'],
             Vcsrepo['gitlab'],
-            Exec['bundle-install'],
-            File['repositories'],
+            Exec['bundle-install']
         ],
     }
 
@@ -139,14 +138,6 @@ class gitlab::gitlab(
         group       => 'git',
         mode        => 0755,
         require     => Vcsrepo['gitlab'],
-    }
-
-    file { 'repositories':
-        path        => '/home/git/repositories',
-        ensure      => directory,
-        owner       => 'git',
-        group       => 'git',
-        mode        => 0755,
     }
 
     service { 'gitlab':
