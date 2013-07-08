@@ -19,9 +19,10 @@ class gitlab::shell {
     }
 
     exec { 'install':
-        command     => '/home/git/gitlab-shell/bin/install.sh',
+        command     => '/home/git/gitlab-shell/bin/install',
         creates     => '/home/git/repositories',
         cwd         => '/home/git/gitlab-shell',
         user        => 'git',
+        require     => Vcsrepo['gitlab-shell']
     }
 }
