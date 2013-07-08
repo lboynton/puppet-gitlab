@@ -113,12 +113,12 @@ class gitlab::gitlab(
         ],
     }
 
-    file { 'unicorn.rb':
-        path        => '/home/git/gitlab/config/unicorn.rb',
+    file { 'puma.rb':
+        path        => '/home/git/gitlab/config/puma.rb',
         ensure      => file,
         owner       => git,
         group       => git,
-        source      => '/home/git/gitlab/config/unicorn.rb.example',
+        source      => '/home/git/gitlab/config/puma.rb.example',
         require     => [
             User['git'],
             Vcsrepo['gitlab'],
