@@ -139,6 +139,22 @@ class gitlab::gitlab(
         require     => Vcsrepo['gitlab'],
     }
 
+    file { '/home/git/gitlab/public/uploads':
+        ensure      => directory,
+        owner       => 'git',
+        group       => 'git',
+        mode        => 0755,
+        require     => Vcsrepo['gitlab'],
+    }
+
+    file { '/home/git/gitlab-satellites':
+        ensure      => directory,
+        owner       => 'git',
+        group       => 'git',
+        mode        => 0755,
+        before      => Service['gitlab'],
+    }
+
     service { 'gitlab':
         ensure  => running,
         enable  => true,
