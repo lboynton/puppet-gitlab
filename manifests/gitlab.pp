@@ -75,8 +75,7 @@ class gitlab::gitlab(
         $db_require = 'postgresql-devel'
         $db_without = 'mysql'
     }
-    # TODO: Need to install bundler using the gem from the rvm install of ruby.
-    # Currently have to log in as root and do gem install bundler.
+    # TODO: Work out why this only works on the second puppet run
     # TODO: Remove rvm paths so that this works when ruby version changes
     exec { 'bundle-install':
         command     => "/usr/local/rvm/gems/ruby-1.9.3-p448@global/bin/bundle install --deployment --without development test ${db_without}",
