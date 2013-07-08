@@ -79,7 +79,7 @@ class gitlab::gitlab(
     # Currently have to log in as root and do gem install bundler.
     # TODO: Remove rvm paths so that this works when ruby version changes
     exec { 'bundle-install':
-        command     => "/usr/local/rvm/gems/ruby-1.9.3-p392@global/bin/bundle install --deployment --without development test ${db_without}",
+        command     => "/usr/local/rvm/gems/ruby-1.9.3-p448@global/bin/bundle install --deployment --without development test ${db_without}",
         cwd         => '/home/git/gitlab',
         user        => 'git',
         require     => [
@@ -89,7 +89,7 @@ class gitlab::gitlab(
             Package[$db_require],
             File['gitlab.yml'],
         ],
-        path        => '/usr/local/rvm/gems/ruby-1.9.3-p392/bin:/usr/local/rvm/gems/ruby-1.9.3-p392@global/bin:/usr/local/rvm/rubies/ruby-1.9.3-p392/bin:/usr/local/rvm/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
+        path        => '/usr/local/rvm/gems/ruby-1.9.3-p448/bin:/usr/local/rvm/gems/ruby-1.9.3-p448@global/bin:/usr/local/rvm/rubies/ruby-1.9.3-p448/bin:/usr/local/rvm/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
         logoutput   => on_failure,
         creates     => '/home/git/gitlab/.bundle/config',
     }
@@ -98,12 +98,12 @@ class gitlab::gitlab(
     # manually edit /home/gitlab/gitlab/lib/tasks/setup.rake to remove it.
     # Then you have to delete database.yml so that this is re-run.
     exec { 'gitlab:setup':
-        command     => '/usr/local/rvm/gems/ruby-1.9.3-p392@global/bin/bundle exec rake gitlab:setup RAILS_ENV=production',
+        command     => '/usr/local/rvm/gems/ruby-1.9.3-p448@global/bin/bundle exec rake gitlab:setup RAILS_ENV=production',
         cwd         => '/home/git/gitlab',
         user        => 'git',
         refreshonly => true,
         subscribe   => File['database.yml'],
-        path        => '/usr/local/rvm/gems/ruby-1.9.3-p392/bin:/usr/local/rvm/gems/ruby-1.9.3-p392@global/bin:/usr/local/rvm/rubies/ruby-1.9.3-p392/bin:/usr/local/rvm/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
+        path        => '/usr/local/rvm/gems/ruby-1.9.3-p448/bin:/usr/local/rvm/gems/ruby-1.9.3-p448@global/bin:/usr/local/rvm/rubies/ruby-1.9.3-p448/bin:/usr/local/rvm/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
         logoutput   => on_failure,
         require     => [
             User['git'],
