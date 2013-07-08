@@ -1,0 +1,3 @@
+2013-xx-xx Lee Boynton <lee@lboynton.com> 0.1.0
+- Update to gitlab 5.3
+- Fix db setup requiring manual intervention

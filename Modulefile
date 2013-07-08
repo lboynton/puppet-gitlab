@@ -1,5 +1,5 @@
 name 'lboynton-gitlab'
-version '0.0.2'
+version '0.1.0'
 source 'https://github.com/lboynton/puppet-gitlab'
 author 'lboynton'
 dependency 'stahnma/epel', '0.0.3'
