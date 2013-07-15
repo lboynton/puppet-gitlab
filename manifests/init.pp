@@ -8,18 +8,20 @@ class gitlab (
     $vhost       = $fqdn,
     $port        = 80,
 ) {
-    if $::osfamily == 'RedHat' and $::operatingsystem != 'Fedora' {
-        include epel
-    }
-
     Class['gitlab::users']  -> Class['gitlab::shell']
     Class['gitlab::gitlab'] -> Class['gitlab::nginx']
 
+    include epel
     include ::nginx
     include gitlab::users
     include gitlab::ruby
     include gitlab::redis
     include gitlab::shell
+
+    package { 'git':
+        ensure  => installed,
+    }
+
     class    { 'gitlab::nginx':
         vhost => $vhost,
     }

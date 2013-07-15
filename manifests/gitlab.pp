@@ -58,14 +58,33 @@ class gitlab::gitlab(
         }
     }
 
-    package { 'charlock_holmes':
-        ensure      => installed,
-        provider    => gem,
+    if !defined(Package['patch']) {
+        package { 'patch':
+            ensure      => installed,
+        }
+    }
+
+    if !defined(Package['libxml2-devel']) {
+        package { 'libxml2-devel':
+            ensure      => installed,
+        }
+    }
+
+    # todo: only run once
+    exec { 'install-charlock_holmes':
+        command     => 'gem install charlock_holmes',
+        environment => 'LD_LIBRARY_PATH=/opt/rh/ruby193/root/usr/lib64',
+        path        => '/opt/rh/ruby193/root/usr/bin:/usr/local/rvm/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
+        logoutput   => on_failure,
         require     => [
             Package['libicu-devel'],
+            Package['patch'],
+            Package['libxml2-devel'],
             Class['gitlab::ruby'],
-        ]
+            Vcsrepo['gitlab'],
+        ],
     }
+
     #Quick Fix to bundle the right requirements
     if $db_type == 'mysql' {
         $db_require = 'mysql-devel'
@@ -75,32 +94,35 @@ class gitlab::gitlab(
         $db_require = 'postgresql-devel'
         $db_without = 'mysql'
     }
-    # TODO: Work out why this only works on the second puppet run
-    # TODO: Remove rvm paths so that this works when ruby version changes
+
     exec { 'bundle-install':
-        command     => "/usr/local/rvm/gems/ruby-1.9.3-p448@global/bin/bundle install --deployment --without development test ${db_without}",
+        command     => "bundle install --deployment --without development test ${db_without}",
         cwd         => '/home/git/gitlab',
+        environment => 'LD_LIBRARY_PATH=/opt/rh/ruby193/root/usr/lib64',
         user        => 'git',
         require     => [
             Class['gitlab::ruby'],
             Vcsrepo['gitlab'],
-            Package['charlock_holmes'],
+            Exec['install-charlock_holmes'],
             Package[$db_require],
             File['gitlab.yml'],
         ],
-        path        => '/usr/local/rvm/gems/ruby-1.9.3-p448/bin:/usr/local/rvm/gems/ruby-1.9.3-p448@global/bin:/usr/local/rvm/rubies/ruby-1.9.3-p448/bin:/usr/local/rvm/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
+        path        => '/opt/rh/ruby193/root/usr/bin:/usr/local/rvm/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
         logoutput   => on_failure,
         creates     => '/home/git/gitlab/.bundle/config',
     }
 
     exec { 'gitlab:setup':
-        command     => '/usr/local/rvm/gems/ruby-1.9.3-p448@global/bin/bundle exec rake gitlab:setup RAILS_ENV=production',
+        command     => 'bundle exec rake gitlab:setup RAILS_ENV=production',
         cwd         => '/home/git/gitlab',
-        environment => 'force=yes',
+        environment => [
+            'force=yes',
+            'LD_LIBRARY_PATH=/opt/rh/ruby193/root/usr/lib64',
+        ],
         user        => 'git',
         refreshonly => true,
         subscribe   => File['database.yml'],
-        path        => '/usr/local/rvm/gems/ruby-1.9.3-p448/bin:/usr/local/rvm/gems/ruby-1.9.3-p448@global/bin:/usr/local/rvm/rubies/ruby-1.9.3-p448/bin:/usr/local/rvm/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
+        path        => '/opt/rh/ruby193/root/usr/bin:/usr/local/rvm/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
         logoutput   => on_failure,
         require     => [
             User['git'],

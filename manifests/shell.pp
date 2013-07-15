@@ -7,7 +7,10 @@ class gitlab::shell {
         revision    => 'v1.5.0',
         owner       => 'git',
         group       => 'git',
-        require     => User['git'],
+        require     => [
+            User['git'],
+            Package['git'],
+        ],
     }
 
     file { 'config.yml':
@@ -22,6 +25,8 @@ class gitlab::shell {
         command     => '/home/git/gitlab-shell/bin/install',
         creates     => '/home/git/repositories',
         cwd         => '/home/git/gitlab-shell',
+        environment => 'LD_LIBRARY_PATH=/opt/rh/ruby193/root/usr/lib64',
+        path        => '/opt/rh/ruby193/root/usr/bin:/usr/local/rvm/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
         user        => 'git',
         require     => Vcsrepo['gitlab-shell']
     }

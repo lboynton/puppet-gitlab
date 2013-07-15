@@ -1,15 +1,14 @@
 class gitlab::ruby{
-    include rvm
-
-    rvm_system_ruby { 'ruby-1.9.3':
-        ensure      => 'present',
-        default_use => true,
+    yumrepo { 'ruby-scl':
+        baseurl        => "http://people.redhat.com/bkabrda/ruby193-rhel-6/",
+        failovermethod => 'priority',
+        enabled        => '1',
+        gpgcheck       => '0',
+        descr          => "Ruby 1.9.3 Dynamic Software Collection"
     }
 
-    rvm_gem { 'ruby-1.9.3/bundler': 
-        ensure      => present,
-        require     => Rvm_system_ruby['ruby-1.9.3'],
+    package {['ruby193', 'ruby193-ruby-devel']:
+        ensure => installed,
+        require => Yumrepo['ruby-scl'],
     }
-
-    rvm::system_user { git: }
 }
