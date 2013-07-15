@@ -26,7 +26,7 @@ class gitlab::shell {
         creates     => '/home/git/repositories',
         cwd         => '/home/git/gitlab-shell',
         environment => 'LD_LIBRARY_PATH=/opt/rh/ruby193/root/usr/lib64',
-        path        => '/opt/rh/ruby193/root/usr/bin:/usr/local/rvm/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
+        path        => '/opt/rh/ruby193/root/usr/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
         user        => 'git',
         require     => Vcsrepo['gitlab-shell']
     }

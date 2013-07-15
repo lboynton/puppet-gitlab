@@ -36,7 +36,6 @@ Vagrant::Config.run do |config|
   # folder, and the third is the path on the host to the actual folder.
   config.vm.share_folder "gitlab", "/srv/puppet/modules/gitlab", ".", :nfs => true
   config.vm.share_folder "epel", "/srv/puppet/modules/epel", "modules/epel", :nfs => true
-  config.vm.share_folder "rvm", "/srv/puppet/modules/rvm", "modules/rvm", :nfs => true
   config.vm.share_folder "mysql", "/srv/puppet/modules/mysql", "modules/mysql", :nfs => true
   config.vm.share_folder "vcsrepo", "/srv/puppet/modules/vcsrepo", "modules/vcsrepo", :nfs => true
   config.vm.share_folder "nginx", "/srv/puppet/modules/nginx", "modules/nginx", :nfs => true

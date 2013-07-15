@@ -74,7 +74,7 @@ class gitlab::gitlab(
     exec { 'install-charlock_holmes':
         command     => 'gem install charlock_holmes',
         environment => 'LD_LIBRARY_PATH=/opt/rh/ruby193/root/usr/lib64',
-        path        => '/opt/rh/ruby193/root/usr/bin:/usr/local/rvm/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
+        path        => '/opt/rh/ruby193/root/usr/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
         logoutput   => on_failure,
         require     => [
             Package['libicu-devel'],
@@ -107,7 +107,7 @@ class gitlab::gitlab(
             Package[$db_require],
             File['gitlab.yml'],
         ],
-        path        => '/opt/rh/ruby193/root/usr/bin:/usr/local/rvm/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
+        path        => '/opt/rh/ruby193/root/usr/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
         logoutput   => on_failure,
         creates     => '/home/git/gitlab/.bundle/config',
     }
@@ -122,7 +122,7 @@ class gitlab::gitlab(
         user        => 'git',
         refreshonly => true,
         subscribe   => File['database.yml'],
-        path        => '/opt/rh/ruby193/root/usr/bin:/usr/local/rvm/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
+        path        => '/opt/rh/ruby193/root/usr/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
         logoutput   => on_failure,
         require     => [
             User['git'],
