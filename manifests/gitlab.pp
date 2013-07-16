@@ -52,24 +52,6 @@ class gitlab::gitlab(
         include postgresql::devel
     }
 
-    if !defined(Package['libicu-devel']) {
-        package { 'libicu-devel':
-            ensure      => installed,
-        }
-    }
-
-    if !defined(Package['patch']) {
-        package { 'patch':
-            ensure      => installed,
-        }
-    }
-
-    if !defined(Package['libxml2-devel']) {
-        package { 'libxml2-devel':
-            ensure      => installed,
-        }
-    }
-
     # todo: only run once
     exec { 'install-charlock_holmes':
         command     => 'gem install charlock_holmes',
@@ -77,9 +59,6 @@ class gitlab::gitlab(
         path        => '/opt/rh/ruby193/root/usr/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
         logoutput   => on_failure,
         require     => [
-            Package['libicu-devel'],
-            Package['patch'],
-            Package['libxml2-devel'],
             Class['gitlab::ruby'],
             Vcsrepo['gitlab'],
         ],
