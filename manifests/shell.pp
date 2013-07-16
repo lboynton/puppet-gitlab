@@ -28,6 +28,10 @@ class gitlab::shell {
         environment => 'LD_LIBRARY_PATH=/opt/rh/ruby193/root/usr/lib64',
         path        => '/opt/rh/ruby193/root/usr/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin',
         user        => 'git',
-        require     => Vcsrepo['gitlab-shell']
+        require     => [
+            Vcsrepo['gitlab-shell'],
+            File['config.yml'],
+        ],
+        logoutput   => on_failure,
     }
 }
