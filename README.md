@@ -1,7 +1,9 @@
-Puppet GitLab module
+Puppet GitLab module (DEPRECATED)
 ==============
 
 Tested on CentOS 6.
+
+I now consider this module deprecated due to lack of time in maintaining this. I'd recommend [Bitnami](http://bitnami.com/stack/gitlab) instead if you want to be able to set up Gitlab easily.
 
 Upgrading
 --------------
